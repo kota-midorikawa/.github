@@ -1,0 +1,35 @@
+name: "✨ Feature request"
+description: "新機能や改善の提案"
+labels: ["enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ご提案ありがとうございます！ユースケースや代替案を含めていただけると議論がはかどります。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 解決したい課題
+      description: どんな困りごとを解決しますか？
+      placeholder: 例）長時間音声でメモリ消費が大きい
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 提案する解決策
+      description: 実装アイデア／UI／CLI 仕様など
+      placeholder: 例）ストリーミング処理の分割バッファと --chunk-size の追加
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 代替案
+      description: 他に検討した方法があれば
+  - type: textarea
+    id: context
+    attributes:
+      label: 追加コンテキスト
+      description: 関連資料・参考リンクなど
