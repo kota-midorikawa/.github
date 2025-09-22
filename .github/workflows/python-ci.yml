@@ -38,6 +38,18 @@ jobs:
           python-version: ${{ matrix.python-version }}
           # cache: pip
       - run: pip install -U pip wheel
+      - name: Detect tests
+        id: testcheck
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)(test_.*\.py|tests/.*\.py)$' >/dev/null; then
+            echo "has_tests=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_tests=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Ensure pytest is available
+        if: ${{ steps.testcheck.outputs.has_tests == 'true' }}
+        run: pip install -U pytest
       - run: |
           if [ -f pyproject.toml ]; then
             pip install -e ".[dev]" || true
@@ -46,3 +58,4 @@ jobs:
             pip install -r requirements.txt
           fi
       - run: pytest -q
+        if: ${{ steps.testcheck.outputs.has_tests == 'true' }}
