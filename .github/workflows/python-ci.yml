@@ -18,6 +18,20 @@ jobs:
         python-version: ${{ fromJson(inputs.python-version) }}
     steps:
       - uses: actions/checkout@v4
+      - name: Ensure LICENSE files exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! ls -1 LICENSE LICENSE.txt LICENSE.md >/dev/null 2>&1; then
+            echo "::error file=LICENSE::Missing LICENSE for docs. Add LICENSE (e.g., CC BY 4.0)."
+            exit 1
+          fi
+          if git ls-files | grep -E '\.(py|ipynb|js|ts|go|rs|java|kt|cpp|c|cc|h|hpp|cs|rb|php|sh|ps1|lua|r|m|swift|scala|dart)$' >/dev/null; then
+            if [[ ! -f LICENSE-CODE ]]; then
+              echo "::error file=LICENSE-CODE::Missing LICENSE-CODE for code (e.g., MIT or Apache-2.0)."
+              exit 1
+            fi
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
