@@ -50,12 +50,6 @@ jobs:
       - name: Ensure pytest is available
         if: ${{ steps.testcheck.outputs.has_tests == 'true' }}
         run: pip install -U pytest
-      - run: |
-          if [ -f pyproject.toml ]; then
-            pip install -e ".[dev]" || true
-          fi
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
-      - run: pytest -q
+      - name: Run pytest
         if: ${{ steps.testcheck.outputs.has_tests == 'true' }}
+        run: pytest -q
