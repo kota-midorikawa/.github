@@ -1,0 +1,26 @@
+name: Chore: CI setup
+description: pytest/ruff/mypy/coverage 等のCI整備
+title: "CI: <短い要約>"
+labels: ["type:chore","prio:p1"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 解決したい課題
+      description: なぜ今やる必要があるか（現状の痛み・リスク）
+      placeholder: 例）自動テスト/静的解析が未整備で品質の自動検証ができない…
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 提案する解決策
+      description: 方針・主要ステップ・完了条件（coverage閾値など）
+      placeholder: 例）pytest/pytest-cov/ruff/mypy導入、CIは3.11/3.12マトリクス…
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件（Done）
+      placeholder: 例）coverage >= 80% のチェックが緑／READMEに実行方法…
