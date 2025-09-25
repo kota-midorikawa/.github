@@ -1,60 +1,135 @@
-name: "🐛 Bug report"
+name: "Bug report"
 description: "動作不良・不具合の報告"
-labels: ["bug", "triage"]
+title: "[Bug] <1行要約>"
+labels: ["type:bug","triage"]   # ← ラベル運用に合わせて調整: 例) ["bug","triage"]
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        バグ報告ありがとうございます！既存の Issue / Discussions を検索済みかご確認ください。
+        ありがとうございます。まず既存の Issue/PR/Discussions を検索してください。
+        セキュリティ脆弱性の可能性がある場合は、公開せずに SECURITY ポリシーの手順で連絡してください。
+
   - type: checkboxes
-    id: checks
+    id: preflight
     attributes:
-      label: 事前チェック
+      label: 事前チェック（必須）
       options:
-        - label: 既存の Issue/PR/Discussions を検索しました
+        - label: 既存の Issue / PR / Discussions を検索しました
           required: true
-        - label: SUPPORT.md を読みました
+        - label: これはセキュリティ脆弱性の報告ではありません（該当する場合は SECURITY へ）
           required: true
+
   - type: input
     id: summary
     attributes:
-      label: 要約
-      description: 1〜2行で簡潔に
+      label: 要約（1〜2行）
       placeholder: 例）CLI の --model 指定時にクラッシュする
     validations:
       required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 影響度（Severity）
+      options:
+        - S0: 重大（データ損失/起動不能/クラッシュ）
+        - S1: 高（主要機能が破綻）
+        - S2: 中（回避策あり/限定的）
+        - S3: 低（軽微/文言/表示）
+      default: 2   # S2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: repro_rate
+    attributes:
+      label: 再現頻度
+      options:
+        - 常に再現
+        - 高頻度（>70%）
+        - 時々（30–70%）
+        - まれ（<30%）
+        - 不明
+      default: 0
+    validations:
+      required: true
+
   - type: textarea
     id: steps
     attributes:
-      label: 再現手順
-      description: 実行コマンドや入力データなど、最小再現手順
+      label: 最小再現手順（必須）
+      description: 実行コマンド・入力データなど、最小の手順でお願いします
       render: bash
       placeholder: |
-        1. ...
-        2. ...
-        3. 実際の結果: ...
-        4. 期待する結果: ...
+        1) 環境を準備: ...
+        2) コマンドを実行: ...
+        3) 実際の結果: ...
+        4) 期待する結果: ...
     validations:
       required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する結果
+      placeholder: 例）エラーなく処理が完了し、出力ファイル X が生成される
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の結果
+      description: エラーメッセージ/スクリーンショット/挙動の詳細
+      render: text
+    validations:
+      required: true
+
   - type: textarea
     id: env
     attributes:
       label: 環境情報
-      description: OS / アーキテクチャ / 言語ランタイム / ライブラリ版 / GPU など
+      description: OS / ランタイム / 依存ライブラリ / ハードウェア等
       placeholder: |
-        OS: Windows 11 / Ubuntu 22.04 / macOS 14
+        OS: Ubuntu 22.04 / macOS 14 / Windows 11
         Python: 3.11.9
-        CUDA: 12.4 / cuDNN 9.2 / GPU: RTX 3080
-        パッケージ: faster-whisper 1.0.0, numpy 2.0.1 ...
+        パッケージ: <プロダクト> 0.2.0, numpy 2.0.1, ...
+        CUDA/cuDNN/GPU（該当時）: CUDA 12.4, cuDNN 9.2, RTX 3080
+        CLI/コマンド実行シェル: bash/zsh/powershell
+        その他: コンテナ/仮想環境の有無、ロケール 等
+
+  - type: input
+    id: version
+    attributes:
+      label: 影響を受けるバージョン/コミット
+      placeholder: 例）v0.2.0 / 0a1b2c3（git rev-parse --short HEAD）
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 該当領域（Triaging 用）
+      options:
+        - CLI/ユーザー操作
+        - API/ライブラリ
+        - ドキュメント
+        - CI/CD
+        - パフォーマンス
+        - パッケージング/配布
+        - その他
+      default: 0
+
   - type: textarea
     id: logs
     attributes:
       label: ログ/スタックトレース
-      description: 可能なら `--verbose` など詳細ログを添付
+      description: 可能なら --verbose 等で取得したログを貼付（秘匿情報はマスク）
       render: text
+
   - type: textarea
     id: extra
     attributes:
       label: 追加情報
-      description: スクリーンショット・補足など
+      description: スクリーンショット、関連Issue/PR、ワークアラウンド等
