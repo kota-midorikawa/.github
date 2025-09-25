@@ -1,35 +1,96 @@
-name: "✨ Feature request"
+name: "Feature request"
 description: "新機能や改善の提案"
-labels: ["enhancement"]
+title: "[Feat] <1行要約>"
+labels: ["type:feature","enhancement","prio:p2"]   # 既定優先度は後で変更可
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        ご提案ありがとうございます！ユースケースや代替案を含めていただけると議論がはかどります。
+        ありがとうございます。まず既存の Issue/PR/Discussions を検索してください。
+        仕様レベルの議論がしやすいよう、**課題→解決→受け入れ条件**の順で記入をお願いします。
+
   - type: textarea
     id: problem
     attributes:
-      label: 解決したい課題
-      description: どんな困りごとを解決しますか？
-      placeholder: 例）長時間音声でメモリ消費が大きい
+      label: 解決したい課題（Why）
+      description: 誰のどんな問題か。頻度・影響・現状の痛み
+      placeholder: 例）長時間音声でメモリ消費が大きく、処理が途中で失敗する（週3回／CLIユーザー全体）
     validations:
       required: true
+
   - type: textarea
     id: solution
     attributes:
-      label: 提案する解決策
-      description: 実装アイデア／UI／CLI 仕様など
-      placeholder: 例）ストリーミング処理の分割バッファと --chunk-size の追加
+      label: 提案する解決策（What）
+      description: UI/CLI/APIの提案。主要フロー・設定項目・互換性への配慮など
+      placeholder: 例）ストリーミング処理に分割バッファを導入し、`--chunk-size` と `--overlap` を追加…
     validations:
       required: true
+
   - type: textarea
-    id: alternatives
+    id: acceptance
     attributes:
-      label: 代替案
-      description: 他に検討した方法があれば
+      label: 受け入れ条件（Definition of Done）
+      description: 成功基準・エラーハンドリング・計測指標などを箇条書きで
+      placeholder: |
+        - 10時間音声でも OOM が発生しない（RSS < X GB）
+        - 既存オプションとの互換性を維持（破壊的変更なし）
+        - README/ヘルプに使用例を追加
+        - ベンチマークで処理時間が±10%以内
+    validations:
+      required: true
+
+  - type: textarea
+    id: usecases
+    attributes:
+      label: 代表ユースケース（Who/When）
+      description: 具体的な利用シナリオ
+      placeholder: 例）現場録音（~8時間）をPCで逐次文字起こし…
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 該当領域（Triaging）
+      options:
+        - CLI/UX
+        - API/ライブラリ
+        - ドキュメント
+        - パフォーマンス
+        - パッケージング/配布
+        - インフラ/CI
+        - その他
+      default: 0
+
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: 非対象（Out of scope）
+      description: 今回カバーしないことを明記
+      placeholder: 例）モデルの音声認識精度向上は対象外
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: リスク/懸念点
+      placeholder: 例）内部バッファ増加によるメモリフラグメンテーション
+
+  - type: textarea
+    id: deps
+    attributes:
+      label: 依存・関連
+      placeholder: 例）#123 と同時対応が望ましい／ライブラリアップグレードが必要
+
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: 互換性・影響
+      options:
+        - label: 破壊的変更（breaking change）を含む
+        - label: セキュリティ/プライバシーへの影響がある
+
   - type: textarea
     id: context
     attributes:
-      label: 追加コンテキスト
-      description: 関連資料・参考リンクなど
+      label: 追加コンテキスト/参考
+      description: 仕様書・デザイン・関連リンク・スクリーンショット等
