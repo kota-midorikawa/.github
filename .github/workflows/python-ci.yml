@@ -9,6 +9,9 @@ on:
         default: '["3.10","3.11","3.12"]'
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -16,9 +19,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ${{ fromJson(inputs.python-version) }}
+        python-version: ${{ fromJSON(inputs.python-version) }}
     steps:
       - uses: actions/checkout@v4
+      
       - name: Ensure LICENSE files exist
         shell: bash
         run: |
@@ -34,11 +38,25 @@ jobs:
               exit 1
             fi
           fi
+          
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          # cache: pip
-      - run: pip install -U pip wheel
+          cache: pip
+          
+      - name: Install deps
+        shell: bash
+        run: |
+          python -m pip install -U pip wheel
+          if [[ -f pyproject.toml ]]; then pip install -e .[dev] || pip install -e . || true; fi
+          [[ -f requirements.txt ]] && pip install -r requirements.txt || true
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          command -v ruff >/dev/null || pip install ruff >/dev/null 2>&1 || true
+          command -v pytest >/dev/null || pip install pytest >/dev/null 2>&1 || true
+
+      - name: Lint (ruff)
+        run: ruff check . || true  # 厳格化する時は || true を外す
+      
       - name: Detect tests
         id: testcheck
         shell: bash
@@ -50,9 +68,7 @@ jobs:
           else
             echo "has_tests=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Ensure pytest is available
-        if: ${{ steps.testcheck.outputs.has_tests == 'true' }}
-        run: pip install -U pytest
+        
       - name: Run pytest
         if: ${{ steps.testcheck.outputs.has_tests == 'true' }}
         run: pytest -q
